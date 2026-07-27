@@ -1,6 +1,6 @@
 
 
-from config import LOG_FILE, EXPORT_FILE, DATE_FORMAT, JSON_INDENT, LINE_INDENT
+from config import LOG_FILE, EXPORT_FILE, DATE_FORMAT, JSON_INDENT, LINE_INDENT, ENTRY_SEPARATOR
 import json
 
 
@@ -13,7 +13,7 @@ def load_entries():
     except FileNotFoundError:
         return entries
 
-    raw_entries = content.strip().split(LINE_INDENT)
+    raw_entries = content.strip().split(ENTRY_SEPARATOR)
 
     for raw in raw_entries:
         raw = raw.strip()
@@ -32,8 +32,8 @@ def save_entries(entries):
     with open(LOG_FILE, "w", encoding="utf-8") as file:
         if entries:
             file.write(
-                LINE_INDENT.join(entry["text"] for entry in entries)
-                + LINE_INDENT
+                ENTRY_SEPARATOR.join(entry["text"] for entry in entries)
+                + ENTRY_SEPARATOR
             )
         else:
             file.write("")

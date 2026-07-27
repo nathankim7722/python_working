@@ -17,6 +17,7 @@ from storage import load_entries, save_entries, append_entries, save_json
 
 class TestStringMethods(unittest.TestCase):
 
+
     def test_has_entry(self):
         entries = [
             {
@@ -47,7 +48,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(result,None)
 
 
-    def test_search_query(self):
+    def test_find_entries(self):
 
         entries = [
             {
@@ -60,8 +61,7 @@ class TestStringMethods(unittest.TestCase):
             }
         ]
 
-        result = commands.search(entries, "python")
-
+        result = commands.find_entries(entries, "python")
         self.assertEqual(len(result), 1)
 
 

@@ -9,7 +9,7 @@ from datetime import date
 from storage import load_entries, save_entries, append_entries, save_json
 import commands
 
-#가능한 커맨드 목록
+#COMMAND------------------------------------------------------------------------------------
 def usage():
     print("""사용법:
     python main.py add/new/create
@@ -17,15 +17,17 @@ def usage():
     python main.py today
     python main.py date""" + DATE_FORMAT + LINE_INDENT)
 
-#커맨드가 있는지 없는지
+
 def command_check(argv):
     if len(argv) <= 1:
         print(LINE_INDENT + "명령어를 입력하세요.")
         usage()
         return
     return True
+#------------------------------------------------------------------
 
-#커맨드에 날짜가 있는지 없는지
+
+#DATE------------------------------------------------------------------------------------
 def has_date(command, argv):
     if len(argv) <= 2:
         print(LINE_INDENT + f"""날짜를 입력하세요.
@@ -34,7 +36,7 @@ def has_date(command, argv):
         return False
     return True
 
-#date separator가 / 인지 아닌지
+
 def date_format_check(command,argv):
     if not re.match(r"^\d{4}-\d{2}-\d{2}$", argv[2]):
         print(LINE_INDENT + "날짜는 " + DATE_FORMAT + f""" 형식으로 입력하세요.
@@ -43,7 +45,7 @@ def date_format_check(command,argv):
         return False
     return True
 
-#실제로 존재하는 날짜인지  
+
 def date_exist_check(command, argv):
     days_in_month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -62,7 +64,7 @@ def date_exist_check(command, argv):
         print(LINE_INDENT + "존재하지 않은 날짜입니다." + LINE_INDENT)
         return False
 
-#모든 날짜 함수가 True인지 아닌지
+
 def date_all(command, argv):
     var_has_date = has_date(command, argv)
 
@@ -80,9 +82,11 @@ def date_all(command, argv):
         return
     else:
         return argv[2]
+#------------------------------------------------------------------------------------
+
 
 #커맨드에 서치할 단어가가 있는지 없는지
-def search_check(argv):
+def has_search_word(argv):
     if len(argv) <= 2:
         print(LINE_INDENT + """검색어를 입력하세요.
 사용법:
@@ -95,7 +99,6 @@ def has_entry(entries, date_str):
     for entry in entries:
         if entry["date"] == date_str:
             return True
-
     return False
 
 
@@ -115,7 +118,7 @@ def main():
                 commands.add_entry(str(date.today()))
             else:
                 print(LINE_INDENT + f"""오늘({str(date.today())})의 로그를 이미 작성했습니다, 변경을 위해 업데이트 커맨드를 사용해 주세요.
-예: python main.py update""" + DATE_FORMAT + LINE_INDENT)
+예: python main.py update """ + DATE_FORMAT + LINE_INDENT)
 
         case "list":
             commands.show_all(load_entries())
@@ -124,28 +127,28 @@ def main():
             commands.show_by_date(load_entries(), str(date.today()))
 
         case "update":
-            da = date_all(command, sys.argv)
+            result = date_all(command, sys.argv)
 
-            if da:
-                commands.update(load_entries(), da)
+            if result:
+                commands.update(load_entries(), result)
 
         case "delete":
-            da = date_all(command, sys.argv)
+            result = date_all(command, sys.argv)
 
-            if da:
-                commands.delete(load_entries(), da)
+            if result:
+                commands.delete(load_entries(), result)
 
         case "date":
-            da = date_all(command, sys.argv)
+            result = date_all(command, sys.argv)
 
-            if da:
-                commands.show_by_date(load_entries(), da)
+            if result:
+                commands.show_by_date(load_entries(), result)
 
         case "search":
-            sc = search_check(sys.argv)
+            result = has_search_word(sys.argv)
 
-            if sc:
-                commands.search(load_entries(), sc)
+            if result:
+                commands.search(load_entries(), result)
 
         case "stats":
             commands.stats(load_entries())

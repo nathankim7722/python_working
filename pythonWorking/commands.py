@@ -83,79 +83,93 @@ def delete(entries, date_str):
     print(f"{date_str} 로그를 삭제했습니다.")
     save_entries(entries)
 
-
-def search(entries, word):
+#SEARCH------------------------------------------------------------------------------------
+def find_entries(entries, word):
     found = []
-
     for entry in entries:
         if word in entry["text"]:
-            print(LINE_INDENT)
-            print(f"{entry['text']}" + LINE_INDENT)
             found.append(entry)
-
-    if not found:
-        print(f"'{word}'에 대한 검색 결과가 없습니다.")
-
     return found
 
 
-def stats(entries):
-    length = len(entries)
+def print_entries(entries, word):
+    if entries:
+        for entry in entries:
+            print(LINE_INDENT + entry['text'] + LINE_INDENT)
+    else:
+        print(f"'{word}'에 대한 검색 결과가 없습니다.")
 
-    if length == 0:
-        print("작성된 로그가 없습니다.")
-        return
 
-    print(f"총 업무 기록 : {length}건")
+def search(entries, keyword):
+    results = find_entries(entries, keyword)
+    print_entries(results, keyword)
+#------------------------------------------------------------------------------------
 
+
+#STATS------------------------------------------------------------------------------------
+def get_date_range(entries):
     dates = [entry["date"] for entry in entries]
+    return min(dates), max(dates)
 
-    first_date = min(dates)
-    last_date = max(dates)
 
-    print("가장 오래된 기록: " + first_date)
-    print("가장 최근 기록: " + last_date)
-
+def get_recent_entries(entries):
     today = date.today()
     day_minus_seven = today - timedelta(days=7)
     days_worked = 0
-
     for entry in entries:
-        entry_date = date.fromisoformat(entry["date"])
-
+        entry_date = date.fromisoformat(entry["date"])  
         if day_minus_seven <= entry_date:
             days_worked += 1
+    return days_worked
 
-    print(f"최근 7일 기록 : {days_worked}건")
 
+def get_top_words(entries):
     top_words = {}
-
     for entry in entries:
-        parts = entry["text"].split("\n\n")
+        parts = entry["text"].split(LINE_INDENT)
         work = parts[1].split("\n", 1)[1].strip().lstrip("- ").strip()
         learn = parts[2].split("\n", 1)[1].strip().lstrip("- ").strip()
-
         work_and_learn = work + " " + learn
         words = work_and_learn.replace("\n", " ").split(" ")
-
         for word in words:
             word = word.strip()
-
             if not word:
                 continue
-
             top_words[word] = top_words.get(word, 0) + 1
-
     sorted_words = sorted(top_words.items(), key=lambda item: item[1])
     top_5 = sorted_words[-5:]
     top_5 = top_5[::-1]
+    return top_5
 
-    print("\n자주 등장한 단어: ")
 
-    for word, count in top_5:
+def calculate_stats(entries):
+   first_date, last_date = get_date_range(entries)
+   recent_entries = get_recent_entries(entries)
+   top_5 = get_top_words(entries)
+   return {     
+	   "total": len(entries),
+	   "first_date": first_date,
+	   "last_date": last_date,
+	   "recent_count": recent_entries,
+	   "top_5": top_5
+	  }
+
+
+def print_stats(result):
+    print(f"\n총 업무 기록: {result["total"]}건")
+    print("가장 오래된 기록: " + result["first_date"])
+    print("가장 최근 기록: " + result["last_date"])
+    print(f"최근 7일 기록 : {result["recent_count"]}건")
+    print("자주 등장한 단어:\n")
+    for word, count in result["top_5"]:
         print(f"{word} ({count}번)")
 
 
+def stats(entries):
+	results = calculate_stats(entries)
+	print_stats(results)
+#------------------------------------------------------------------------------------
+    
 def export(entries):
     save_json(entries)
     print("pythonWorking.json를 Export했습니다.")
