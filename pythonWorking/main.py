@@ -1,6 +1,4 @@
-
-
-# cd "C:\Users\jaese\Desktop\programming folder\python\pythonWorking"
+# cd "C:\Users\jaese\Desktop\programming folder\python\python_working"
 
 from config import DATE_FORMAT, LINE_INDENT, SEPARATOR
 import sys
@@ -95,9 +93,9 @@ def has_search_word(argv):
     return argv[2]
 
 #오늘의 로그가 이미 있는지 없는지
-def has_entry(entries, date_str):
+def has_entry(entries, date):
     for entry in entries:
-        if entry["date"] == date_str:
+        if entry.date == date:
             return True
     return False
 
@@ -115,7 +113,7 @@ def main():
             ac = has_entry(load_entries(), str(date.today()))
 
             if ac == False:
-                commands.add_entry(str(date.today()))
+                commands.add_entry(date.today())
             else:
                 print(LINE_INDENT + f"""오늘({str(date.today())})의 로그를 이미 작성했습니다, 변경을 위해 업데이트 커맨드를 사용해 주세요.
 예: python main.py update """ + DATE_FORMAT + LINE_INDENT)

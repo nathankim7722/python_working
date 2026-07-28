@@ -2,6 +2,13 @@
 
 from config import LOG_FILE, EXPORT_FILE, DATE_FORMAT, JSON_INDENT, LINE_INDENT, ENTRY_SEPARATOR
 import json
+from dataclasses import dataclass
+
+
+@dataclass
+class WorkLogEntry:
+    date: str
+    text: str 
 
 
 def load_entries():
@@ -22,8 +29,8 @@ def load_entries():
             continue
 
         first_line = raw.split("\n")[0]
-        date_str = first_line.replace("*", "").strip()
-        entries.append({"date": date_str, "text": raw})
+        date = first_line.replace("*", "").strip()
+        entries.append(WorkLogEntry(date, raw))
 
     return entries
 
@@ -32,7 +39,7 @@ def save_entries(entries):
     with open(LOG_FILE, "w", encoding="utf-8") as file:
         if entries:
             file.write(
-                ENTRY_SEPARATOR.join(entry["text"] for entry in entries)
+                ENTRY_SEPARATOR.join(entry.text for entry in entries)
                 + ENTRY_SEPARATOR
             )
         else:

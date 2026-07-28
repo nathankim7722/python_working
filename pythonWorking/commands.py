@@ -17,7 +17,8 @@ def log(date_str):
     else:
         message = "오늘 하루도 수고 많았어요!"
 
-    return f"""**{date_str}**
+    return f"""
+**{date_str}**
 
 오늘 한 일은?
  - {work}
@@ -37,28 +38,28 @@ def show_all(entries):
         return
 
     for entry in entries:
-        print(entry["text"])
+        print(entry.text)
         print(SEPARATOR)
 
 
 def show_by_date(entries, date_str):
     for entry in entries:
-        if entry["date"] == date_str:
-            print(entry["text"])
+        if entry.date == date_str:
+            print(entry.text)
             return
 
     print(date_str + " 에 작성된 로그가 없습니다.")
 
 
-def add_entry(date_str):
-    entry = log(date_str)
+def add_entry(date):
+    entry = log(date)
     append_entries(entry)
 
 
 def update(entries, date_str):
     for entry in entries:
-        if entry["date"] == date_str:
-            entry["text"] = log(date_str)
+        if entry.date == date_str:
+            entry.text = log(date_str)
             save_entries(entries)
             print(f"{date_str} 로그를 수정했습니다.")
             return
@@ -71,7 +72,7 @@ def delete(entries, date_str):
     number = 0
 
     for entry in entries:
-        if entry["date"] == date_str:
+        if entry.date == date_str:
             position = number
         number += 1
 
@@ -87,7 +88,7 @@ def delete(entries, date_str):
 def find_entries(entries, word):
     found = []
     for entry in entries:
-        if word in entry["text"]:
+        if word in entry.text:
             found.append(entry)
     return found
 
@@ -108,7 +109,7 @@ def search(entries, keyword):
 
 #STATS------------------------------------------------------------------------------------
 def get_date_range(entries):
-    dates = [entry["date"] for entry in entries]
+    dates = [entry.date for entry in entries]
     return min(dates), max(dates)
 
 
@@ -117,7 +118,7 @@ def get_recent_entries(entries):
     day_minus_seven = today - timedelta(days=7)
     days_worked = 0
     for entry in entries:
-        entry_date = date.fromisoformat(entry["date"])  
+        entry_date = date.fromisoformat(entry.date)  
         if day_minus_seven <= entry_date:
             days_worked += 1
     return days_worked
@@ -126,7 +127,7 @@ def get_recent_entries(entries):
 def get_top_words(entries):
     top_words = {}
     for entry in entries:
-        parts = entry["text"].split(LINE_INDENT)
+        parts = entry.text.split(LINE_INDENT)
         work = parts[1].split("\n", 1)[1].strip().lstrip("- ").strip()
         learn = parts[2].split("\n", 1)[1].strip().lstrip("- ").strip()
         work_and_learn = work + " " + learn
