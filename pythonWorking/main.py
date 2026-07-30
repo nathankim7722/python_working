@@ -3,7 +3,7 @@
 from config import DATE_FORMAT, LINE_INDENT, SEPARATOR
 import sys
 import re
-from datetime import date
+from datetime import date, datetime
 from storage import load_entries, save_entries, append_entries, save_json
 import commands
 
@@ -44,21 +44,11 @@ def date_format_check(command,argv):
     return True
 
 
-def date_exist_check(command, argv):
-    days_in_month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    year = int(argv[2][0:4])
-    month = int(argv[2][5:7])
-    day = int(argv[2][-2:])
-
-    if year % 4 == 0:
-        days_in_month[2] = 29
-
-    if month > 12:
-        print(LINE_INDENT + "존재하지 않은 날짜입니다." + LINE_INDENT)
-        return False
-
-    elif day > int(days_in_month[month]):
+def date_exist_check(argv):
+    try:
+        date.strptime(str(argv[2]), "%Y-%m-%d")
+        return True
+    except ValueError:
         print(LINE_INDENT + "존재하지 않은 날짜입니다." + LINE_INDENT)
         return False
 
@@ -92,7 +82,7 @@ def has_search_word(argv):
         return
     return argv[2]
 
-#오늘의 로그가 이미 있는지 없는지
+#오늘의 로그가 이미 있는지 없는지   
 def has_entry(entries, date):
     for entry in entries:
         if entry.date == date:

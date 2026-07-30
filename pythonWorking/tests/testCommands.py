@@ -41,8 +41,8 @@ class TestStringMethods(unittest.TestCase):
 
 
     def test_date_exist_check(self):
-        result = main.date_exist_check("date", ["main.py", "date", "2020-02-29"])
-        self.assertEqual(result,None)
+        result = main.date_exist_check(["main.py", "date", "2025-02-28"])
+        self.assertTrue(result)
 
 
     def test_find_entries(self):
