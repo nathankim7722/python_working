@@ -170,9 +170,8 @@ def stats(entries):
 	results = calculate_stats(entries)
 	print_stats(results)
 #------------------------------------------------------------------------------------
-    
+
 def export(entries):
     save_json(entries)
     print("pythonWorking.json를 Export했습니다.")
 
-    

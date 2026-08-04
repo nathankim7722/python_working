@@ -2,7 +2,7 @@
 
 from config import LOG_FILE, EXPORT_FILE, DATE_FORMAT, JSON_INDENT, LINE_INDENT, ENTRY_SEPARATOR
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -51,7 +51,24 @@ def append_entries(entry):
         file.write(entry)
 
 
-def save_json(data):
-    with open(EXPORT_FILE, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=JSON_INDENT)
+def load_json():
+    entries = []
+
+    try:
+        with open(EXPORT_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        return entries
+
+    entries = [WorkLogEntry(**e) for e in data]
+    return entries
+
+
+def save_json(entries):
+    list_of_json = []
+    for e in entries:
+        dict = asdict(e)
+        list_of_json.append(dict)
+        with open(EXPORT_FILE, "w", encoding="utf-8") as file:
+            json.dump(list_of_json, file, ensure_ascii=False, indent=JSON_INDENT)
 
